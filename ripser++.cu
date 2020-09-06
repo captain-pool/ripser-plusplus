@@ -1801,7 +1801,7 @@ public:
     void compute_dim_0_pairs(std::vector<diameter_index_t_struct>& edges,
                              std::vector<diameter_index_t_struct>& columns_to_reduce) {
 #ifdef PRINT_PERSISTENCE_PAIRS
-        std::cout << "persistence intervals in dim 0:" << std::endl;
+        //std::cout << "persistence intervals in dim 0:" << std::endl;
 #endif
 
         union_find dset(n);
@@ -1819,7 +1819,7 @@ public:
             if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
                 if(e.diameter!=0) {
-                    std::cout << " [0," << e.diameter << ")" << std::endl;
+                    std::cout << "0 " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf inf" << std::endl;
                 }
 #endif
                 dset.link(u, v);
@@ -1831,7 +1831,7 @@ public:
 
 #ifdef PRINT_PERSISTENCE_PAIRS
         for (index_t i= 0; i < n; ++i)
-            if (dset.find(i) == i) std::cout << " [0, )" << std::endl;
+            if (dset.find(i) == i) std::cout << "0 " << i << " " << i << " inf inf" <<std::endl;
 #endif
     }
     void gpu_compute_dim_0_pairs(std::vector<struct diameter_index_t_struct>& columns_to_reduce);
@@ -1939,7 +1939,7 @@ public:
                        hash_map<index_t, index_t>& pivot_column_index, index_t dim) {
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-        std::cout << "persistence intervals in dim " << dim << ":" << std::endl;
+        std::cerr << "persistence intervals in dim " << dim << ":" << std::endl;
 #endif
 #ifdef CPUONLY_ASSEMBLE_REDUCTION_MATRIX
         compressed_sparse_matrix<diameter_index_t_struct> reduction_matrix;
@@ -1957,7 +1957,8 @@ public:
                     working_coboundary;
 
             value_t diameter= column_to_reduce.diameter;
-
+	    std::vector<index_t> vertices_of_birth(2);
+	    get_simplex_vertices(column_to_reduce.index, dim, n, std::back_inserter(vertices_of_birth));	  
 #ifdef INDICATE_PROGRESS
             if ((index_column_to_reduce + 1) % 1000000 == 0)
 				std::cerr << "\033[K"
@@ -1991,12 +1992,15 @@ public:
                     } else {
 #ifdef PRINT_PERSISTENCE_PAIRS
                         value_t death= pivot.diameter;
+			std::vector<index_t> vertices_of_death(2);
+			get_simplex_vertices(pivot.index, dim, n, std::back_inserter(vertices_of_death));
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
                             std::cerr << "\033[K";
 #endif
-                            std::cout << " [" << diameter << "," << death << ")" << std::endl
-                                      << std::flush;
+			    //std::cout << diameter << " " << death << ")" << std::endl
+                             //         << std::flush;
+			    std::cout <<dim <<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
                         }
 #endif
                         pivot_column_index[pivot.index]= index_column_to_reduce;
@@ -2005,7 +2009,7 @@ public:
                     }
                 } else {
 #ifdef PRINT_PERSISTENCE_PAIRS
-                    std::cout << " [" << diameter << ", )" << std::endl << std::flush;
+                    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2018,7 +2022,7 @@ public:
             index_t gpuscan_startingdim) {
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-        std::cout << "persistence intervals in dim " << dim << ":" << std::endl;
+        std::cerr << "persistence intervals in dim " << dim << ":" << std::endl;
 #endif
 #ifdef ASSEMBLE_REDUCTION_SUBMATRIX
         compressed_sparse_submatrix<diameter_index_t_struct> reduction_submatrix;
@@ -2047,6 +2051,8 @@ public:
                     working_coboundary;
 
             value_t diameter= column_to_reduce.diameter;
+	    std::vector<index_t> vertices_of_birth(2);
+	    get_simplex_vertices(column_to_reduce.index, dim, n, std::back_inserter(vertices_of_birth));
 
             index_t index_column_to_add= index_column_to_reduce;
 
@@ -2084,12 +2090,15 @@ public:
                     }else{
 #ifdef PRINT_PERSISTENCE_PAIRS
                         value_t death= pivot.diameter;
+			std::vector<index_t> vertices_of_death(2);
+			get_simplex_vertices(pivot.index, dim, n, std::back_inserter(vertices_of_death));
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
                             std::cerr << clear_line << std::flush;
 #endif
-                            std::cout << " [" << diameter << "," << death << ")" << std::endl
-                                      << std::flush;
+                            //std::cout << " [" << diameter << "," << death << ")" << std::endl
+                            //          << std::flush;
+			    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
                         }
 #endif
 
@@ -2114,7 +2123,7 @@ public:
 #ifdef INDICATE_PROGRESS
                     std::cerr << clear_line << std::flush;
 #endif
-                    std::cout << " [" << diameter << ", )" << std::endl << std::flush;
+                    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2298,7 +2307,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
     cudaMemcpy(h_columns_to_reduce, d_columns_to_reduce, sizeof(struct diameter_index_t_struct)*(*h_num_columns_to_reduce), cudaMemcpyDeviceToHost);
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-    std::cout << "persistence intervals in dim 0:" << std::endl;
+    std::cerr << "persistence intervals in dim 0:" << std::endl;
 #endif
 
     std::vector<index_t> vertices_of_edge(2);
@@ -2312,7 +2321,8 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
 #ifdef PRINT_PERSISTENCE_PAIRS
             //remove paired destroyer columns (we compute cohomology)
             if(e.diameter!=0) {
-                std::cout << " [0," << e.diameter << ")" << std::endl;
+//                std::cout << " [0," << e.diameter << ")" << std::endl;
+		    std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
             }
 #endif
             dset.link(u, v);
@@ -2331,7 +2341,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
 
 #ifdef PRINT_PERSISTENCE_PAIRS
     for (index_t i= 0; i < n; ++i)
-        if (dset.find(i) == i) std::cout << " [0, )" << std::endl << std::flush;
+        if (dset.find(i) == i) std::cout << i << " " << i << " inf inf" <<std::endl << std::flush;
 #endif
 #ifdef COUNTING
     std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
@@ -2376,7 +2386,7 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
     cudaMemcpy(h_simplices, d_simplices, sizeof(struct diameter_index_t_struct)*(*h_num_simplices), cudaMemcpyDeviceToHost);
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-    std::cout << "persistence intervals in dim 0:" << std::endl;
+    //std::cout << "persistence intervals in dim 0:" << std::endl;
 #endif
 
 
@@ -2390,7 +2400,7 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
         if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
             if(e.diameter!=0) {
-                std::cout << " [0," << e.diameter << ")" << std::endl;
+                std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
             }
 #endif
             dset.link(u, v);
@@ -2408,7 +2418,7 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
     *h_num_nonapparent= *h_num_columns_to_reduce;//we haven't found any apparent columns yet, so set all columns to nonapparent
 #ifdef PRINT_PERSISTENCE_PAIRS
     for (index_t i= 0; i < n; ++i)
-        if (dset.find(i) == i) std::cout << " [0, )" << std::endl << std::flush;
+        if (dset.find(i) == i) std::cout << "0 " << i << " " << i << " inf inf" << std::endl << std::flush;
 #endif
 #ifdef COUNTING
     std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
@@ -3342,7 +3352,7 @@ compressed_lower_distance_matrix read_point_cloud_python(value_t* matrix, int nu
 
         index_t n= eucl_dist.size();
 
-        std::cout << "point cloud with " << n << " points in dimension "
+        std::cerr << "point cloud with " << n << " points in dimension "
                   << eucl_dist.points.front().size() << std::endl;
 
         std::vector<value_t> distances;
@@ -3373,7 +3383,7 @@ compressed_lower_distance_matrix read_point_cloud(std::istream& input_stream) {
 
     index_t n= eucl_dist.size();
 
-    std::cout << "point cloud with " << n << " points in dimension "
+    std::cerr << "point cloud with " << n << " points in dimension "
               << eucl_dist.points.front().size() << std::endl;
 
     std::vector<value_t> distances;
@@ -3619,7 +3629,7 @@ extern "C" void run_main_filename(int argc,  char** argv, const char* filename) 
         std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
 #endif
         assert(dist.num_entries%2==0);
-        std::cout << "sparse distance matrix with " << dist.size() << " points and "
+        std::cerr << "sparse distance matrix with " << dist.size() << " points and "
                   << dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
                   << std::endl;
 
@@ -3654,18 +3664,18 @@ extern "C" void run_main_filename(int argc,  char** argv, const char* filename) 
             if (d <= threshold) ++num_edges;
         }
 
-        std::cout << "value range: [" << min << "," << max_finite << "]" << std::endl;
+        std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
 
         if (use_sparse) {
 
-            std::cout << "sparse distance matrix with " << dist.size() << " points and "
+            std::cerr << "sparse distance matrix with " << dist.size() << " points and "
                       << num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
                       << std::endl;
             ripser<sparse_distance_matrix>(sparse_distance_matrix(std::move(dist), threshold),
                                            dim_max, threshold, ratio)
                     .compute_barcodes();
         } else {
-            std::cout << "distance matrix with " << dist.size() << " points" << std::endl;
+            std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
             ripser<compressed_lower_distance_matrix>(std::move(dist), dim_max, threshold, ratio).compute_barcodes();
         }
     }
@@ -3755,7 +3765,7 @@ extern "C" void run_main(int argc, char** argv, value_t* matrix, int num_entries
         std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
 #endif
         assert(dist.num_entries%2==0);
-        std::cout << "sparse distance matrix with " << dist.size() << " points and "
+        std::cerr << "sparse distance matrix with " << dist.size() << " points and "
                   << dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
                   << std::endl;
 
@@ -3791,18 +3801,18 @@ extern "C" void run_main(int argc, char** argv, value_t* matrix, int num_entries
             if (d <= threshold) ++num_edges;
         }
 
-        std::cout << "value range: [" << min << "," << max_finite << "]" << std::endl;
+        std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
 
         if (use_sparse) {
 
-            std::cout << "sparse distance matrix with " << dist.size() << " points and "
+            std::cerr << "sparse distance matrix with " << dist.size() << " points and "
                       << num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
                       << std::endl;
             ripser<sparse_distance_matrix>(sparse_distance_matrix(std::move(dist), threshold),
                                            dim_max, threshold, ratio)
                     .compute_barcodes();
         } else {
-            std::cout << "distance matrix with " << dist.size() << " points" << std::endl;
+            std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
             ripser<compressed_lower_distance_matrix>(std::move(dist), dim_max, threshold, ratio).compute_barcodes();
         }
     }
@@ -3898,7 +3908,7 @@ int main(int argc, char** argv) {
         std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
 #endif
         assert(dist.num_entries%2==0);
-        std::cout << "sparse distance matrix with " << dist.size() << " points and "
+        std::cerr << "sparse distance matrix with " << dist.size() << " points and "
                   << dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
                   << std::endl;
 
@@ -3933,18 +3943,18 @@ int main(int argc, char** argv) {
             if (d <= threshold) ++num_edges;
         }
 
-        std::cout << "value range: [" << min << "," << max_finite << "]" << std::endl;
+        std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
 
         if (use_sparse) {
 
-            std::cout << "sparse distance matrix with " << dist.size() << " points and "
+            std::cerr << "sparse distance matrix with " << dist.size() << " points and "
                       << num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
                       << std::endl;
             ripser<sparse_distance_matrix>(sparse_distance_matrix(std::move(dist), threshold),
                                            dim_max, threshold, ratio)
                     .compute_barcodes();
         } else {
-            std::cout << "distance matrix with " << dist.size() << " points" << std::endl;
+            std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
             ripser<compressed_lower_distance_matrix>(std::move(dist), dim_max, threshold, ratio).compute_barcodes();
         }
     }
