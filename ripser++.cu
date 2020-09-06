@@ -2092,9 +2092,21 @@ public:
 
                     }else{
 #ifdef PRINT_PERSISTENCE_PAIRS
-                        value_t death= pivot.diameter;
-			std::vector<index_t> vertices_of_death(2);
+      value_t death= pivot.diameter;
+      // TODO(@captain-pool): What's the length of the vertices when doing higher dimensions?
+			std::vector<index_t> vertices_of_death;
+      vertices_of_death.clear();
 			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
+      std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
+      for ( auto vertex: vertices_of_death){
+        std::cerr << vertex << ", ";
+      }
+      std::cerr << std::endl << "Length of Birth Vertices(dim " << dim << "): " << vertices_of_birth.size() << std::endl;
+      for (auto vertex : vertices_of_birth){
+        std::cerr << vertex << ", ";
+      }
+      std::cerr << std::endl;
+ 
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
                             std::cerr << clear_line << std::flush;
@@ -2102,7 +2114,7 @@ public:
                             //std::cout << " [" << diameter << "," << death << ")" << std::endl
                             //          << std::flush;
 			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
-			    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
+			    std::cout <<dim<<"<line2105> "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
                         }
 #endif
 
