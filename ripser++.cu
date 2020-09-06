@@ -106,10 +106,10 @@ public:
     inline void reserve(size_t hint) { this->resize(hint); }
 };
 #endif
+static const std::string clear_line("\r\033[K");
 
 #ifdef INDICATE_PROGRESS
 static const std::chrono::milliseconds time_step(40);
-static const std::string clear_line("\r\033[K");
 #endif
 
 typedef float value_t;
@@ -1801,7 +1801,7 @@ public:
     void compute_dim_0_pairs(std::vector<diameter_index_t_struct>& edges,
                              std::vector<diameter_index_t_struct>& columns_to_reduce) {
 #ifdef PRINT_PERSISTENCE_PAIRS
-        //std::cout << "persistence intervals in dim 0:" << std::endl;
+        std::cerr << "persistence intervals in dim 0:" << std::endl;
 #endif
 
         union_find dset(n);
@@ -1819,7 +1819,8 @@ public:
             if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
                 if(e.diameter!=0) {
-                    std::cout << "0 " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf inf" << std::endl;
+                    std::cerr << clear_line << "Writing Line . . ." << std::flush;
+    		    std::cout << "0 " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf inf" << std::endl;
                 }
 #endif
                 dset.link(u, v);
@@ -1958,7 +1959,7 @@ public:
 
             value_t diameter= column_to_reduce.diameter;
 	    std::vector<index_t> vertices_of_birth(2);
-	    get_simplex_vertices(column_to_reduce.index, dim, n, std::back_inserter(vertices_of_birth));	  
+	    get_simplex_vertices(column_to_reduce.index, dim + 1, n, std::back_inserter(vertices_of_birth));	  
 #ifdef INDICATE_PROGRESS
             if ((index_column_to_reduce + 1) % 1000000 == 0)
 				std::cerr << "\033[K"
@@ -1993,13 +1994,14 @@ public:
 #ifdef PRINT_PERSISTENCE_PAIRS
                         value_t death= pivot.diameter;
 			std::vector<index_t> vertices_of_death(2);
-			get_simplex_vertices(pivot.index, dim, n, std::back_inserter(vertices_of_death));
+			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
                             std::cerr << "\033[K";
 #endif
 			    //std::cout << diameter << " " << death << ")" << std::endl
                              //         << std::flush;
+			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
 			    std::cout <<dim <<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
                         }
 #endif
@@ -2009,6 +2011,7 @@ public:
                     }
                 } else {
 #ifdef PRINT_PERSISTENCE_PAIRS
+			std::cerr << clear_line << "Writing Line . . ." << std::flush;
                     std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
                     break;
@@ -2052,7 +2055,7 @@ public:
 
             value_t diameter= column_to_reduce.diameter;
 	    std::vector<index_t> vertices_of_birth(2);
-	    get_simplex_vertices(column_to_reduce.index, dim, n, std::back_inserter(vertices_of_birth));
+	    get_simplex_vertices(column_to_reduce.index, dim + 1, n, std::back_inserter(vertices_of_birth));
 
             index_t index_column_to_add= index_column_to_reduce;
 
@@ -2091,13 +2094,14 @@ public:
 #ifdef PRINT_PERSISTENCE_PAIRS
                         value_t death= pivot.diameter;
 			std::vector<index_t> vertices_of_death(2);
-			get_simplex_vertices(pivot.index, dim, n, std::back_inserter(vertices_of_death));
+			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
                             std::cerr << clear_line << std::flush;
 #endif
                             //std::cout << " [" << diameter << "," << death << ")" << std::endl
                             //          << std::flush;
+			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
 			    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
                         }
 #endif
@@ -2123,7 +2127,8 @@ public:
 #ifdef INDICATE_PROGRESS
                     std::cerr << clear_line << std::flush;
 #endif
-                    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
+                    std::cerr << clear_line << "Writing Line . . ." << std::flush;
+		    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2322,7 +2327,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
             //remove paired destroyer columns (we compute cohomology)
             if(e.diameter!=0) {
 //                std::cout << " [0," << e.diameter << ")" << std::endl;
-		    std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
+		  std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
             }
 #endif
             dset.link(u, v);
@@ -2341,7 +2346,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
 
 #ifdef PRINT_PERSISTENCE_PAIRS
     for (index_t i= 0; i < n; ++i)
-        if (dset.find(i) == i) std::cout << i << " " << i << " inf inf" <<std::endl << std::flush;
+        if (dset.find(i) == i) std::cout << "0 " << i << " " << i << " inf inf" <<std::endl << std::flush;
 #endif
 #ifdef COUNTING
     std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
@@ -2386,7 +2391,7 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
     cudaMemcpy(h_simplices, d_simplices, sizeof(struct diameter_index_t_struct)*(*h_num_simplices), cudaMemcpyDeviceToHost);
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-    //std::cout << "persistence intervals in dim 0:" << std::endl;
+    std::cerr << "persistence intervals in dim 0:" << std::endl;
 #endif
 
 
@@ -2400,7 +2405,8 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
         if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
             if(e.diameter!=0) {
-                std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
+	            std::cerr << clear_line << "Writing Line . . ." << std::flush;
+		    std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
             }
 #endif
             dset.link(u, v);
