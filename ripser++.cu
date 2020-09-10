@@ -2098,6 +2098,7 @@ public:
       vertices_of_death.clear();
 			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
       std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
+      std::exit(0);
       for ( auto vertex: vertices_of_death){
         std::cerr << vertex << ", ";
       }
