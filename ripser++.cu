@@ -2142,7 +2142,6 @@ public:
                 l = vertices_of_death[2];
               }
               std::cout<< dim << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << k << " " << l << std::endl;
-              std::exit(0);
             }
             else{
                   std::cout << " [" << diameter << "," << death << ")" << std::endl
