@@ -2054,7 +2054,7 @@ public:
                     working_coboundary;
 
             value_t diameter= column_to_reduce.diameter;
-	    std::vector<index_t> vertices_of_birth(2);
+	    std::vector<index_t> vertices_of_birth;
 	    get_simplex_vertices(column_to_reduce.index, dim + 1, n, std::back_inserter(vertices_of_birth));
 
             index_t index_column_to_add= index_column_to_reduce;
@@ -2094,28 +2094,30 @@ public:
 #ifdef PRINT_PERSISTENCE_PAIRS
       value_t death= pivot.diameter;
       // TODO(@captain-pool): What's the length of the vertices when doing higher dimensions?
-			std::vector<index_t> vertices_of_death;
-      vertices_of_death.clear();
-			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
-      std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
-      std::exit(0);
-      for ( auto vertex: vertices_of_death){
-        std::cerr << vertex << ", ";
-      }
-      std::cerr << std::endl << "Length of Birth Vertices(dim " << dim << "): " << vertices_of_birth.size() << std::endl;
-      for (auto vertex : vertices_of_birth){
-        std::cerr << vertex << ", ";
-      }
-      std::cerr << std::endl;
- 
+			
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
                             std::cerr << clear_line << std::flush;
 #endif
                             //std::cout << " [" << diameter << "," << death << ")" << std::endl
                             //          << std::flush;
-			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
-			    std::cout <<dim<<"<line2105> "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
+            if(dim == 1){
+              std::vector<index_t> vertices_of_death;
+              get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
+              std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
+              // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
+              // Selecting vertex of maximum length edge
+              std::cout << "Distance Between: " << vertices_of_death[0] << " and " << vertices_of_death[1] << ": " << dist(vertices_of_death[0], vertices_of_death[1]);
+              std::exit(0);
+            }
+            elif(dim==2){
+              std::vector<index_t> vertices_of_death;
+              vertices_of_death.clear();
+              get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
+              std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
+              std::exit(0);
+            }
+
                         }
 #endif
 
