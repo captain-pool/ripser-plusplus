@@ -274,7 +274,9 @@ public:
     value_t operator()(const index_t i, const index_t j) const {
         return i == j ? 0 : i < j ? rows[j][i] : rows[i][j];
     }
-
+    value_t distance(index_t i, index_t j){
+      return i == j ? 0 : i < j ? rows[j][i] : rows[i][j];
+    }
     size_t size() const { return rows.size(); }
 };
 
@@ -2005,7 +2007,8 @@ public:
                              //         << std::flush;
 			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
 			    //TODO: (@captain-pool) Delete this crap
-          std::cout <<dim <<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
+          std::cerr<<"Crap Starts here";
+          std::exit(0);
                         }
 #endif
                         pivot_column_index[pivot.index]= index_column_to_reduce;
@@ -2110,7 +2113,7 @@ public:
               std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
               // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
               // Selecting vertex of maximum length edge
-              std::cout << "Distance Between: " << vertices_of_death[0] << " and " << vertices_of_death[1] << ": " << dist(vertices_of_death[0], vertices_of_death[1]);
+              std::cerr << "Distance Matrix Crap" << std::endl;
               std::exit(0);
             }
             else if(dim==2){
