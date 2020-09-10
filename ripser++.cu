@@ -1522,6 +1522,8 @@ template <typename DistanceMatrix> class ripser {
     float ratio;
     const binomial_coeff_table binomial_coeff;
     mutable std::vector<index_t> vertices;
+    mutable std::vector<index_t> vertices_of_birth;
+    mutable std::vector<index_t> vertices_of_death;
     mutable std::vector<diameter_index_t_struct> cofacet_entries;
 private:
     size_t freeMem, totalMem;
@@ -1958,7 +1960,7 @@ public:
                     working_coboundary;
 
             value_t diameter= column_to_reduce.diameter;
-	    std::vector<index_t> vertices_of_birth(2);
+      vertices_of_birth.clear();
 	    get_simplex_vertices(column_to_reduce.index, dim + 1, n, std::back_inserter(vertices_of_birth));	  
 #ifdef INDICATE_PROGRESS
             if ((index_column_to_reduce + 1) % 1000000 == 0)
@@ -1993,7 +1995,7 @@ public:
                     } else {
 #ifdef PRINT_PERSISTENCE_PAIRS
                         value_t death= pivot.diameter;
-			std::vector<index_t> vertices_of_death(2);
+      vertices_of_death.clear();
 			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
@@ -2002,7 +2004,8 @@ public:
 			    //std::cout << diameter << " " << death << ")" << std::endl
                              //         << std::flush;
 			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
-			    std::cout <<dim <<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
+			    //TODO: (@captain-pool) Delete this crap
+          std::cout <<dim <<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] << std::endl << std::flush;
                         }
 #endif
                         pivot_column_index[pivot.index]= index_column_to_reduce;
@@ -2054,7 +2057,7 @@ public:
                     working_coboundary;
 
             value_t diameter= column_to_reduce.diameter;
-	    std::vector<index_t> vertices_of_birth;
+            vertices_of_birth.clear();
 	    get_simplex_vertices(column_to_reduce.index, dim + 1, n, std::back_inserter(vertices_of_birth));
 
             index_t index_column_to_add= index_column_to_reduce;
@@ -2102,7 +2105,7 @@ public:
                             //std::cout << " [" << diameter << "," << death << ")" << std::endl
                             //          << std::flush;
             if(dim == 1){
-              std::vector<index_t> vertices_of_death;
+              vertices_of_death.clear();
               get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
               std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
               // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
@@ -2110,8 +2113,7 @@ public:
               std::cout << "Distance Between: " << vertices_of_death[0] << " and " << vertices_of_death[1] << ": " << dist(vertices_of_death[0], vertices_of_death[1]);
               std::exit(0);
             }
-            elif(dim==2){
-              std::vector<index_t> vertices_of_death;
+            else if(dim==2){
               vertices_of_death.clear();
               get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
               std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
