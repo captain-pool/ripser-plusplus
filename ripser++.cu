@@ -2128,16 +2128,16 @@ public:
               value_t c = dist.distance(vertices_of_birth[0], vertices_of_birth[1]);
               auto k = vertices_of_birth[0];
               auto l = vertices_of_birth[1];
-              if( d1 > c){
+              if( d1 >= c){
                 k = vertices_of_death[0];
                 l = vertices_of_death[1];
               }
-              else if(d2 > c){
+              else if(d2 >= c){
                 k = vertices_of_death[0];
                 l = vertices_of_death[2];
 
               }
-              else if(d3 > c){
+              else if(d3 >= c){
                 k = vertices_of_death[1];
                 l = vertices_of_death[2];
               }
