@@ -2119,7 +2119,6 @@ public:
             if(dim == 1){
               vertices_of_death.clear();
               get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
-              std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
               // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
               // Selecting vertex of maximum length edge
               value_t d1 = dist.distance(vertices_of_death[0], vertices_of_death[1]);
