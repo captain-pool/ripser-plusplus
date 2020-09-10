@@ -293,6 +293,14 @@ struct sparse_distance_matrix {
                            index_t _num_edges)
             : neighbors(std::move(_neighbors)), num_entries(_num_edges*2) {}
     value_t distance(index_t i, index_t j){
+      // TODO (@captain-pool / anyone who is reading)
+      // This is a dummy, just to fool the compiler. The compiler looks for it,
+      // When it doesn't get, it raises an issue.
+      // The reason for this extra distance() is because the operator() can only called with
+      // const index_t / mutable
+      // I tried those, but have no effing clue, why it doesn't work.
+      // Now I'm defining another generic function that doesn't needs const and it works.
+      // It is not yet implemented for sparse_distance_matrix, so please implement it.
       return 0;
     }
     template <typename DistanceMatrix>
@@ -2108,24 +2116,39 @@ public:
 #ifdef INDICATE_PROGRESS
                             std::cerr << clear_line << std::flush;
 #endif
-                            //std::cout << " [" << diameter << "," << death << ")" << std::endl
-                            //          << std::flush;
             if(dim == 1){
               vertices_of_death.clear();
               get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
               std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
               // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
               // Selecting vertex of maximum length edge
-              std::cerr << "Distance: "<< dist.distance(vertices_of_death[0], vertices_of_death[1])<< std::endl;
-              std::exit(0);
-            }
-            else if(dim==2){
-              vertices_of_death.clear();
-              get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
-              std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
-              std::exit(0);
-            }
+              value_t d1 = dist.distance(vertices_of_death[0], vertices_of_death[1]);
+              value_t d2 = dist.distance(vertices_of_death[0], vertices_of_death[2]);
+              value_t d3 = dist.distance(vertices_of_death[1], vertices_of_death[2]);
+              value_t c = dist.distance(vertices_of_birth[0], vertices_of_birth[1]);
+              auto k = vertices_of_birth[0];
+              auto l = vertices_of_birth[1];
+              if( d1 > c){
+                k = vertices_of_death[0];
+                l = vertices_of_death[1];
+              }
+              else if(d2 > c){
+                k = vertices_of_death[0];
+                l = vertices_of_death[2];
 
+              }
+              else if(d3 > c){
+                k = vertices_of_death[1];
+                l = vertices_of_death[2];
+              }
+              std::cout<< dim << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << k << " " << l << std::endl;
+              std::exit(0);
+            }
+            else{
+                  std::cout << " [" << diameter << "," << death << ")" << std::endl
+                          << std::flush;
+
+                }
                         }
 #endif
 
