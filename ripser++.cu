@@ -2114,7 +2114,7 @@ public:
               std::cerr << "Length of Death Vertices(dim " << dim << "): " << vertices_of_death.size() << std::endl;
               // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
               // Selecting vertex of maximum length edge
-              std::cerr << "Distance Matrix Crap" << typeid(dist).name() << std::endl;
+              std::cerr << "Distance: "<< dist.distance(vertices_of_death[0], vertices_of_death[1])<< std::endl;
               std::exit(0);
             }
             else if(dim==2){
