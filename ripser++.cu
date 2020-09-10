@@ -292,7 +292,9 @@ struct sparse_distance_matrix {
     sparse_distance_matrix(std::vector<std::vector<index_diameter_t_struct>>&& _neighbors,
                            index_t _num_edges)
             : neighbors(std::move(_neighbors)), num_entries(_num_edges*2) {}
-
+    value_t distance(index_t i, index_t j){
+      return 0;
+    }
     template <typename DistanceMatrix>
     sparse_distance_matrix(const DistanceMatrix& mat, const value_t threshold)
             : neighbors(mat.size()), num_entries(0) {
