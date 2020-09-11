@@ -1536,6 +1536,7 @@ template <typename DistanceMatrix> class ripser {
     const binomial_coeff_table binomial_coeff;
     mutable std::vector<index_t> vertices;
     mutable std::vector<index_t> vertices_of_birth;
+
     mutable std::vector<index_t> vertices_of_death;
     mutable std::vector<diameter_index_t_struct> cofacet_entries;
 private:
@@ -1594,11 +1595,13 @@ private:
     index_t* d_num_simplices=NULL;//use d_num_simplices to keep track of the number of simplices in h_ or d_ simplices
     index_t* h_num_simplices;//h_num_simplices is tied to d_num_simplices in pinned memory
 public:
-
+    std::ofstream outfile;
     ripser(DistanceMatrix&& _dist, index_t _dim_max, value_t _threshold, float _ratio)
             : dist(std::move(_dist)), n(dist.size()),
               dim_max(std::min(_dim_max, index_t(dist.size() - 2))), threshold(_threshold),
-              ratio(_ratio), binomial_coeff(n, dim_max + 2) {}
+              ratio(_ratio), binomial_coeff(n, dim_max + 2) {
+	      outfile.open("/tmp/features.txt", std::ios::trunc | std::ios::out);
+	      }
 
     void free_init_cpumem() {
         free(h_pivot_column_index_array_OR_nonapparent_cols);
@@ -1834,8 +1837,7 @@ public:
             if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
                 if(e.diameter!=0) {
-                    std::cerr << clear_line << "Writing Line . . ." << std::flush;
-    		    std::cout << "0 " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf inf" << std::endl;
+    		    outfile << "0 " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf inf" << std::endl;
                 }
 #endif
                 dset.link(u, v);
@@ -1847,7 +1849,7 @@ public:
 
 #ifdef PRINT_PERSISTENCE_PAIRS
         for (index_t i= 0; i < n; ++i)
-            if (dset.find(i) == i) std::cout << "0 " << i << " " << i << " inf inf" <<std::endl;
+            if (dset.find(i) == i) outfile << "0 " << i << " " << i << " inf inf" <<std::endl;
 #endif
     }
     void gpu_compute_dim_0_pairs(std::vector<struct diameter_index_t_struct>& columns_to_reduce);
@@ -2016,10 +2018,6 @@ public:
 #endif
 			    //std::cout << diameter << " " << death << ")" << std::endl
                              //         << std::flush;
-			    std::cerr << clear_line << "Writing Line . . ." << std::flush;
-			    //TODO: (@captain-pool) Delete this crap
-          std::cerr<<"Crap Starts here";
-          std::exit(0);
                         }
 #endif
                         pivot_column_index[pivot.index]= index_column_to_reduce;
@@ -2028,8 +2026,7 @@ public:
                     }
                 } else {
 #ifdef PRINT_PERSISTENCE_PAIRS
-			std::cerr << clear_line << "Writing Line . . ." << std::flush;
-                    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
+			outfile <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2140,7 +2137,7 @@ public:
                 k = vertices_of_death[1];
                 l = vertices_of_death[2];
               }
-              std::cout<< dim << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << k << " " << l << std::endl;
+              outfile<< dim << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << k << " " << l << std::endl;
             }
             else{
                   std::cout << " [" << diameter << "," << death << ")" << std::endl
@@ -2171,8 +2168,7 @@ public:
 #ifdef INDICATE_PROGRESS
                     std::cerr << clear_line << std::flush;
 #endif
-                    std::cerr << clear_line << "Writing Line . . ." << std::flush;
-		    std::cout <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
+		    outfile <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2371,7 +2367,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
             //remove paired destroyer columns (we compute cohomology)
             if(e.diameter!=0) {
 //                std::cout << " [0," << e.diameter << ")" << std::endl;
-		  std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
+		  outfile << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
             }
 #endif
             dset.link(u, v);
@@ -2390,7 +2386,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
 
 #ifdef PRINT_PERSISTENCE_PAIRS
     for (index_t i= 0; i < n; ++i)
-        if (dset.find(i) == i) std::cout << "0 " << i << " " << i << " inf inf" <<std::endl << std::flush;
+        if (dset.find(i) == i) outfile << "0 " << i << " " << i << " inf inf" <<std::endl << std::flush;
 #endif
 #ifdef COUNTING
     std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
