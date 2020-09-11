@@ -185,7 +185,7 @@ public:
     binomial_coeff_table(index_t n, index_t k) {
         binoms= (index_t*)malloc(sizeof(index_t)*(n+1)*(k+1));
         if(binoms==NULL){
-            std::cerr<<"malloc for binoms failed"<<std::endl;
+            //std::cerr<<"malloc for binoms failed"<<std::endl;
             exit(1);
         }
         num_n= n+1;
@@ -307,7 +307,7 @@ struct sparse_distance_matrix {
     sparse_distance_matrix(const DistanceMatrix& mat, const value_t threshold)
             : neighbors(mat.size()), num_entries(0) {
 
-        std::cerr << "threshold: " << threshold << std::endl;
+        //std::cerr << "threshold: " << threshold << std::endl;
 
         for (index_t i= 0; i < size(); ++i) {
             for (index_t j= 0; j < size(); ++j) {
@@ -326,12 +326,12 @@ private:
         if (dist.capacity == 0) {
             dist.entries= (value_t *) malloc(sizeof(value_t) * size() * 10);
             if(dist.entries==NULL){
-                std::cerr<<"entries could not be malloced"<<std::endl;
+                //std::cerr<<"entries could not be malloced"<<std::endl;
                 exit(1);
             }
             dist.col_indices= (index_t *) malloc(sizeof(index_t) * size() * 10);
             if(dist.col_indices==NULL){
-                std::cerr<<"col_indices could not be malloced"<<std::endl;
+                //std::cerr<<"col_indices could not be malloced"<<std::endl;
                 exit(1);
             }
             dist.capacity= size() * 10;
@@ -341,12 +341,12 @@ private:
             dist.capacity*= 2;
             dist.entries= (value_t *) realloc(dist.entries, sizeof(value_t) * dist.capacity);
             if(dist.entries==NULL){
-                std::cerr<<"col_indices could not be realloced with double memory"<<std::endl;
+                //std::cerr<<"col_indices could not be realloced with double memory"<<std::endl;
                 exit(1);
             }
             dist.col_indices= (index_t *) realloc(dist.col_indices, sizeof(index_t) * dist.capacity);
             if(dist.col_indices==NULL){
-                std::cerr<<"col_indices could not be realloced with double memory"<<std::endl;
+                //std::cerr<<"col_indices could not be realloced with double memory"<<std::endl;
                 exit(1);
             }
         }
@@ -371,17 +371,17 @@ public:
         dist.capacity= num_entries;//this sets the matrix to exactly num_entries memory allocation
         dist.offsets= (index_t*) malloc(sizeof(index_t)*(size()+1));
         if(dist.offsets==NULL){
-            std::cerr<<"malloc for offsets failed"<<std::endl;
+            //std::cerr<<"malloc for offsets failed"<<std::endl;
             exit(1);
         }
         dist.col_indices= (index_t*) malloc(sizeof(index_t)*dist.capacity);
         if(dist.col_indices==NULL){
-            std::cerr<<"malloc for col_indices failed"<<std::endl;
+            //std::cerr<<"malloc for col_indices failed"<<std::endl;
             exit(1);
         }
         dist.entries= (value_t*) malloc(sizeof(value_t)*dist.capacity);
         if(dist.entries==NULL){
-            std::cerr<<"malloc for entries failed"<<std::endl;
+            //std::cerr<<"malloc for entries failed"<<std::endl;
             exit(1);
         }
         for(index_t i= 0; i<size(); i++){
@@ -1619,7 +1619,7 @@ public:
 
         cudaMemGetInfo(&freeMem,&totalMem);
 #ifdef PROFILING
-        std::cerr<<"before calculation, sparse: total mem, free mem: "<<totalMem <<" bytes, "<<freeMem<<" bytes"<<std::endl;
+        //std::cerr<<"before calculation, sparse: total mem, free mem: "<<totalMem <<" bytes, "<<freeMem<<" bytes"<<std::endl;
 #endif
         index_t gpumem_char_array_bytes_factor= sizeof(char);
         index_t gpumem_index_t_array_bytes_factor= sizeof(index_t);
@@ -1646,7 +1646,7 @@ public:
                 +gpumem_index_t_pairs_array_bytes_factor;
 
 #ifdef PROFILING
-        std::cerr<<"sparse final calculation for memory, free memory: "<<freeMem <<" bytes, sizeof_factor_sum: "<<sizeof_factor_sum<<" bytes"<<std::endl;
+        //std::cerr<<"sparse final calculation for memory, free memory: "<<freeMem <<" bytes, sizeof_factor_sum: "<<sizeof_factor_sum<<" bytes"<<std::endl;
 #endif
         return (freeMem*0.7-fixedmemory)/sizeof_factor_sum;
     }
@@ -1660,7 +1660,7 @@ public:
 
         cudaMemGetInfo(&freeMem,&totalMem);
 #ifdef PROFILING
-        std::cerr<<"GPU memory before full rips memory calculation, total mem: "<< totalMem<<" bytes, free mem: "<<freeMem<<" bytes"<<std::endl;
+        //std::cerr<<"GPU memory before full rips memory calculation, total mem: "<< totalMem<<" bytes, free mem: "<<freeMem<<" bytes"<<std::endl;
 #endif
         do{
             index_t gpu_num_simplices_forall_dims= gpu_dim_max<n/2?get_num_simplices_for_dim(gpu_dim_max): get_num_simplices_for_dim(n/2);
@@ -1693,8 +1693,8 @@ public:
                                            gpumem_index_t_pairs_array_bytes;//this last one is for thrust radix sorting buffer
 
 #ifdef PROFILING
-                //std::cerr<<"free gpu memory for full rips by calculation in bytes for gpu dim: "<<gpu_dim_max<<": "<<freeMem-gpu_alloc_memory_in_bytes<<std::endl;
-                std::cerr<<"gpu memory needed for full rips by calculation in bytes for dim: "<<gpu_dim_max<<": "<<gpu_alloc_memory_in_bytes<<" bytes"<<std::endl;
+                ////std::cerr<<"free gpu memory for full rips by calculation in bytes for gpu dim: "<<gpu_dim_max<<": "<<freeMem-gpu_alloc_memory_in_bytes<<std::endl;
+                //std::cerr<<"gpu memory needed for full rips by calculation in bytes for dim: "<<gpu_dim_max<<": "<<gpu_alloc_memory_in_bytes<<" bytes"<<std::endl;
 #endif
                 if (gpu_alloc_memory_in_bytes <= freeMem){
                     return gpu_dim_max;
@@ -1715,8 +1715,8 @@ public:
                                            + gpumem_diameter_index_t_array_bytes
                                            + gpumem_index_t_pairs_array_bytes;//last one is for buffer needed for sorting
 #ifdef PROFILING
-                //std::cerr<<"(sparse) free gpu memory for full rips by calculation in bytes for gpu dim: "<<gpu_dim_max<<": "<<freeMem-gpu_alloc_memory_in_bytes<<std::endl;
-                std::cerr<<"(sparse) gpu memory needed for full rips by calculation in bytes for dim: "<<gpu_dim_max<<": "<<gpu_alloc_memory_in_bytes<<" bytes"<<std::endl;
+                ////std::cerr<<"(sparse) free gpu memory for full rips by calculation in bytes for gpu dim: "<<gpu_dim_max<<": "<<freeMem-gpu_alloc_memory_in_bytes<<std::endl;
+                //std::cerr<<"(sparse) gpu memory needed for full rips by calculation in bytes for dim: "<<gpu_dim_max<<": "<<gpu_alloc_memory_in_bytes<<" bytes"<<std::endl;
 #endif
                 if (gpu_alloc_memory_in_bytes <= freeMem){
                     return gpu_dim_max;
@@ -1819,7 +1819,7 @@ public:
     void compute_dim_0_pairs(std::vector<diameter_index_t_struct>& edges,
                              std::vector<diameter_index_t_struct>& columns_to_reduce) {
 #ifdef PRINT_PERSISTENCE_PAIRS
-        std::cerr << "persistence intervals in dim 0:" << std::endl;
+        //std::cerr << "persistence intervals in dim 0:" << std::endl;
 #endif
 
         union_find dset(n);
@@ -1957,7 +1957,7 @@ public:
                        hash_map<index_t, index_t>& pivot_column_index, index_t dim) {
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-        std::cerr << "persistence intervals in dim " << dim << ":" << std::endl;
+        //std::cerr << "persistence intervals in dim " << dim << ":" << std::endl;
 #endif
 #ifdef CPUONLY_ASSEMBLE_REDUCTION_MATRIX
         compressed_sparse_matrix<diameter_index_t_struct> reduction_matrix;
@@ -1979,7 +1979,7 @@ public:
 	    get_simplex_vertices(column_to_reduce.index, dim + 1, n, std::back_inserter(vertices_of_birth));	  
 #ifdef INDICATE_PROGRESS
             if ((index_column_to_reduce + 1) % 1000000 == 0)
-				std::cerr << "\033[K"
+				//std::cerr << "\033[K"
 				          << "reducing column " << index_column_to_reduce + 1 << "/"
 				          << columns_to_reduce.size() << " (diameter " << diameter << ")"
 				          << std::flush << "\r";
@@ -2014,7 +2014,7 @@ public:
 			get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
-                            std::cerr << "\033[K";
+                            //std::cerr << "\033[K";
 #endif
 			    //std::cout << diameter << " " << death << ")" << std::endl
                              //         << std::flush;
@@ -2039,7 +2039,7 @@ public:
             index_t gpuscan_startingdim) {
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-        std::cerr << "persistence intervals in dim " << dim << ":" << std::endl;
+        //std::cerr << "persistence intervals in dim " << dim << ":" << std::endl;
 #endif
 #ifdef ASSEMBLE_REDUCTION_SUBMATRIX
         compressed_sparse_submatrix<diameter_index_t_struct> reduction_submatrix;
@@ -2083,7 +2083,7 @@ public:
 #ifdef INDICATE_PROGRESS
                 //if(sub_index_column_to_reduce%2==0){
                 if (std::chrono::steady_clock::now() > next) {
-                    std::cerr<< clear_line << "reducing column " << index_column_to_reduce + 1
+                    //std::cerr<< clear_line << "reducing column " << index_column_to_reduce + 1
                               << "/" << *h_num_columns_to_reduce << " (diameter " << diameter << ")"
                               << std::flush;
                     next= std::chrono::steady_clock::now() + time_step;
@@ -2111,7 +2111,7 @@ public:
 			
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
-                            std::cerr << clear_line << std::flush;
+                            //std::cerr << clear_line << std::flush;
 #endif
             if(dim == 1){
               vertices_of_death.clear();
@@ -2166,7 +2166,7 @@ public:
 
 #ifdef PRINT_PERSISTENCE_PAIRS
 #ifdef INDICATE_PROGRESS
-                    std::cerr << clear_line << std::flush;
+                    //std::cerr << clear_line << std::flush;
 #endif
 		    outfile <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
 #endif
@@ -2175,7 +2175,7 @@ public:
             }
         }
 #ifdef INDICATE_PROGRESS
-        std::cerr << clear_line << std::flush;
+        //std::cerr << clear_line << std::flush;
 #endif
     }
 
@@ -2346,13 +2346,13 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
     thrust::sort(thrust::device, d_columns_to_reduce, d_columns_to_reduce+ max_num_edges, cmp_reverse);
 #endif
 #ifdef COUNTING
-    std::cerr<<"num edges filtered by diameter: "<<*h_num_columns_to_reduce<<std::endl;
+    //std::cerr<<"num edges filtered by diameter: "<<*h_num_columns_to_reduce<<std::endl;
 #endif
 
     cudaMemcpy(h_columns_to_reduce, d_columns_to_reduce, sizeof(struct diameter_index_t_struct)*(*h_num_columns_to_reduce), cudaMemcpyDeviceToHost);
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-    std::cerr << "persistence intervals in dim 0:" << std::endl;
+    //std::cerr << "persistence intervals in dim 0:" << std::endl;
 #endif
 
     std::vector<index_t> vertices_of_edge(2);
@@ -2389,7 +2389,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
         if (dset.find(i) == i) outfile << "0 " << i << " " << i << " inf inf" <<std::endl << std::flush;
 #endif
 #ifdef COUNTING
-    std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
+    //std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
 #endif
 }
 
@@ -2425,13 +2425,13 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
     CUDACHECK(cudaDeviceSynchronize());
 
 #ifdef COUNTING
-    std::cerr<<"num (sparse) edges filtered: "<<*h_num_simplices<<std::endl;
+    //std::cerr<<"num (sparse) edges filtered: "<<*h_num_simplices<<std::endl;
 #endif
 
     cudaMemcpy(h_simplices, d_simplices, sizeof(struct diameter_index_t_struct)*(*h_num_simplices), cudaMemcpyDeviceToHost);
 
 #ifdef PRINT_PERSISTENCE_PAIRS
-    std::cerr << "persistence intervals in dim 0:" << std::endl;
+    //std::cerr << "persistence intervals in dim 0:" << std::endl;
 #endif
 
 
@@ -2445,7 +2445,7 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
         if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
             if(e.diameter!=0) {
-	            std::cerr << clear_line << "Writing Line . . ." << std::flush;
+	            //std::cerr << clear_line << "Writing Line . . ." << std::flush;
 		    std::cout << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
             }
 #endif
@@ -2467,7 +2467,7 @@ void ripser<sparse_distance_matrix>::gpu_compute_dim_0_pairs(std::vector<struct 
         if (dset.find(i) == i) std::cout << "0 " << i << " " << i << " inf inf" << std::endl << std::flush;
 #endif
 #ifdef COUNTING
-    std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
+    //std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
 #endif
 }
 //finding apparent pairs
@@ -2483,7 +2483,7 @@ void ripser<compressed_lower_distance_matrix>::gpuscan(const index_t dim){
     }
     index_t num_simplices= binomial_coeff(n,dim+1);
 #ifdef COUNTING
-    std::cerr<<"max possible num simplices: "<<num_simplices<<std::endl;
+    //std::cerr<<"max possible num simplices: "<<num_simplices<<std::endl;
 #endif
 
 
@@ -2518,7 +2518,7 @@ void ripser<compressed_lower_distance_matrix>::gpuscan(const index_t dim){
     CUDACHECK(cudaDeviceSynchronize());
     sw.stop();
 #ifdef PROFILING
-    std::cerr<<"gpu scan kernel time for dim: "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"gpu scan kernel time for dim: "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
 
     CUDACHECK(cudaDeviceSynchronize());
@@ -2541,7 +2541,7 @@ void ripser<compressed_lower_distance_matrix>::gpuscan(const index_t dim){
 
     num_apparent= *h_num_columns_to_reduce-*h_num_nonapparent;
 #ifdef COUNTING
-    std::cerr<<"num apparent for dim: "<<dim<<" is: " <<num_apparent<<std::endl;
+    //std::cerr<<"num apparent for dim: "<<dim<<" is: " <<num_apparent<<std::endl;
 #endif
     //transfer to CPU side all GPU data structures
     cudaMemcpy(h_pivot_array, d_pivot_array, sizeof(index_t_pair_struct)*(num_apparent), cudaMemcpyDeviceToHost);
@@ -2560,7 +2560,7 @@ void ripser<compressed_lower_distance_matrix>::gpuscan(const index_t dim){
 #endif
     postprocessing.stop();
 #ifdef PROFILING
-    std::cerr<<"INSERTION POSTPROCESSING FOR GPU IN DIM "<<dim<<": "<<postprocessing.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"INSERTION POSTPROCESSING FOR GPU IN DIM "<<dim<<": "<<postprocessing.ms()/1000.0<<"s"<<std::endl;
 #endif
 }
 
@@ -2577,7 +2577,7 @@ void ripser<sparse_distance_matrix>::gpuscan(const index_t dim){
     }
     index_t num_simplices= binomial_coeff(n,dim+1);
 #ifdef COUNTING
-    std::cerr<<"max possible num simplices: "<<num_simplices<<std::endl;
+    //std::cerr<<"max possible num simplices: "<<num_simplices<<std::endl;
 #endif
 
     cudaMemcpy(d_columns_to_reduce, h_columns_to_reduce,
@@ -2605,7 +2605,7 @@ void ripser<sparse_distance_matrix>::gpuscan(const index_t dim){
     CUDACHECK(cudaDeviceSynchronize());
     sw.stop();
 #ifdef PROFILING
-    std::cerr<<"gpu scan kernel time for dim: "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"gpu scan kernel time for dim: "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     CUDACHECK(cudaDeviceSynchronize());
 
@@ -2625,7 +2625,7 @@ void ripser<sparse_distance_matrix>::gpuscan(const index_t dim){
 
     num_apparent= *h_num_columns_to_reduce-*h_num_nonapparent;
 #ifdef COUNTING
-    std::cerr<<"num apparent for dim: "<<dim<<" is: "<<num_apparent<<std::endl;
+    //std::cerr<<"num apparent for dim: "<<dim<<" is: "<<num_apparent<<std::endl;
 #endif
     //transfer to CPU side all GPU data structures
     cudaMemcpy(h_pivot_array, d_pivot_array, sizeof(index_t_pair_struct)*(num_apparent), cudaMemcpyDeviceToHost);
@@ -2642,7 +2642,7 @@ void ripser<sparse_distance_matrix>::gpuscan(const index_t dim){
 #endif
     postprocessing.stop();
 #ifdef PROFILING
-    std::cerr<<"INSERTION POSTPROCESSING FOR GPU IN DIM "<<dim<<": "<<postprocessing.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"INSERTION POSTPROCESSING FOR GPU IN DIM "<<dim<<": "<<postprocessing.ms()/1000.0<<"s"<<std::endl;
 #endif
 }
 
@@ -2681,7 +2681,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_assemble_columns_to_reduce_pl
 
     sw.stop();
 #ifdef PROFILING
-    std::cerr<<"time to copy hash map for dim "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"time to copy hash map for dim "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
 #ifdef ASSEMBLE_REDUCTION_SUBMATRIX
     cudaMemset(d_flagarray_OR_index_to_subindex, 0, sizeof(index_t)*max_num_simplices);
@@ -2718,7 +2718,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_assemble_columns_to_reduce_pl
 #endif
 
 #ifdef COUNTING
-    std::cerr<<"num cols to reduce for dim "<<dim<<": "<<*h_num_columns_to_reduce<<std::endl;
+    //std::cerr<<"num cols to reduce for dim "<<dim<<": "<<*h_num_columns_to_reduce<<std::endl;
 #endif
     cudaMemcpy(h_columns_to_reduce, d_columns_to_reduce, sizeof(struct diameter_index_t_struct)*(*h_num_columns_to_reduce), cudaMemcpyDeviceToHost);
 
@@ -2728,7 +2728,7 @@ template <>
 void ripser<sparse_distance_matrix>::gpu_assemble_columns_to_reduce_plusplus(const index_t dim) {
     index_t max_num_simplices= binomial_coeff(n,dim+1);
 #ifdef COUNTING
-    std::cerr<<"max possible num simplices: "<<max_num_simplices<<std::endl;
+    //std::cerr<<"max possible num simplices: "<<max_num_simplices<<std::endl;
 #endif
     *h_num_columns_to_reduce= 0;
 
@@ -2736,7 +2736,7 @@ void ripser<sparse_distance_matrix>::gpu_assemble_columns_to_reduce_plusplus(con
     grid_size  *= deviceProp.multiProcessorCount;
     //columns_to_reduce contains the "new set" of simplices
 #ifdef COUNTING
-    std::cerr<<"(sparse) num simplices before kernel call: "<<*h_num_simplices<<std::endl;
+    //std::cerr<<"(sparse) num simplices before kernel call: "<<*h_num_simplices<<std::endl;
 #endif
 
     populate_sparse_simplices_warpfiltering<<<grid_size, 256, 256 * dim * sizeof(index_t)>>>(d_simplices, d_num_simplices, d_columns_to_reduce, d_num_columns_to_reduce, d_CSR_distance_matrix, n, dim, threshold, d_binomial_coeff);
@@ -2746,7 +2746,7 @@ void ripser<sparse_distance_matrix>::gpu_assemble_columns_to_reduce_plusplus(con
     *h_num_simplices= *h_num_columns_to_reduce;
 
 #ifdef COUNTING
-    std::cerr<<"(sparse) num simplices for dim "<<dim<<": "<<*h_num_simplices<<std::endl;
+    //std::cerr<<"(sparse) num simplices for dim "<<dim<<": "<<*h_num_simplices<<std::endl;
 #endif
     struct greaterdiam_lowerindex_diameter_index_t_struct_compare cmp;
 
@@ -2766,7 +2766,7 @@ void ripser<sparse_distance_matrix>::gpu_assemble_columns_to_reduce_plusplus(con
         }
     }
 #ifdef COUNTING
-    std::cerr<<"columns to reduce for dim: "<<dim<<": "<<columns_to_reduce.size()<<std::endl;
+    //std::cerr<<"columns to reduce for dim: "<<dim<<": "<<columns_to_reduce.size()<<std::endl;
 #endif
     *h_num_columns_to_reduce= columns_to_reduce.size();
 
@@ -2781,7 +2781,7 @@ void ripser<compressed_lower_distance_matrix>::cpu_byneighbor_assemble_columns_t
                                                                                          std::vector<diameter_index_t_struct>& columns_to_reduce,
                                                                                          hash_map<index_t,index_t>& pivot_column_index, index_t dim){
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << "assembling columns on CPU" << std::flush;
+    //std::cerr << clear_line << "assembling columns on CPU" << std::flush;
     std::chrono::steady_clock::time_point next= std::chrono::steady_clock::now() + time_step;
 #endif
     --dim;
@@ -2795,7 +2795,7 @@ void ripser<compressed_lower_distance_matrix>::cpu_byneighbor_assemble_columns_t
         while (cofacets.has_next(false)) {
 #ifdef INDICATE_PROGRESS
             if (std::chrono::steady_clock::now() > next) {
-                       std::cerr << clear_line << "assembling " << next_simplices.size()
+                       //std::cerr << clear_line << "assembling " << next_simplices.size()
                                  << " columns (processing " << std::distance(&simplices[0], &simplex)
                                  << "/" << simplices.size() << " simplices)" << std::flush;
                        next= std::chrono::steady_clock::now() + time_step;
@@ -2816,14 +2816,14 @@ void ripser<compressed_lower_distance_matrix>::cpu_byneighbor_assemble_columns_t
     simplices.swap(next_simplices);
 
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << "sorting " << columns_to_reduce.size() << " columns"
+    //std::cerr << clear_line << "sorting " << columns_to_reduce.size() << " columns"
                      << std::flush;
 #endif
     struct greaterdiam_lowerindex_diameter_index_t_struct_compare cmp;
     std::sort(columns_to_reduce.begin(), columns_to_reduce.end(),
               cmp);
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << std::flush;
+    //std::cerr << clear_line << std::flush;
 #endif
 
 }
@@ -2833,7 +2833,7 @@ void ripser<sparse_distance_matrix>::cpu_byneighbor_assemble_columns_to_reduce(s
                                                                                std::vector<diameter_index_t_struct>& columns_to_reduce,
                                                                                hash_map<index_t,index_t>& pivot_column_index, index_t dim){
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << "assembling columns" << std::flush;
+    //std::cerr << clear_line << "assembling columns" << std::flush;
     std::chrono::steady_clock::time_point next= std::chrono::steady_clock::now() + time_step;
 #endif
     --dim;
@@ -2847,7 +2847,7 @@ void ripser<sparse_distance_matrix>::cpu_byneighbor_assemble_columns_to_reduce(s
         while (cofacets.has_next(false)) {
 #ifdef INDICATE_PROGRESS
             if (std::chrono::steady_clock::now() > next) {
-                       std::cerr << clear_line << "assembling " << next_simplices.size()
+                       //std::cerr << clear_line << "assembling " << next_simplices.size()
                                  << " columns (processing " << std::distance(&simplices[0], &simplex)
                                  << "/" << simplices.size() << " simplices)" << std::flush;
                        next= std::chrono::steady_clock::now() + time_step;
@@ -2868,14 +2868,14 @@ void ripser<sparse_distance_matrix>::cpu_byneighbor_assemble_columns_to_reduce(s
     simplices.swap(next_simplices);
 
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << "sorting " << columns_to_reduce.size() << " columns"
+    //std::cerr << clear_line << "sorting " << columns_to_reduce.size() << " columns"
                      << std::flush;
 #endif
     struct greaterdiam_lowerindex_diameter_index_t_struct_compare cmp;
     std::sort(columns_to_reduce.begin(), columns_to_reduce.end(),
               cmp);
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << std::flush;
+    //std::cerr << clear_line << std::flush;
 #endif
 
 }
@@ -2886,12 +2886,12 @@ void ripser<compressed_lower_distance_matrix>::cpu_assemble_columns_to_reduce(st
                                                                               index_t dim) {
     index_t num_simplices= binomial_coeff(n, dim + 1);
 #ifdef COUNTING
-    std::cerr<<"max num possible simplices: "<<num_simplices<<std::endl;
+    //std::cerr<<"max num possible simplices: "<<num_simplices<<std::endl;
 #endif
     columns_to_reduce.clear();
 
 #ifdef INDICATE_PROGRESS
-    std::cerr << "\033[K"
+    //std::cerr << "\033[K"
 	          << "assembling " << num_simplices << " columns" << std::flush << "\r";
 #endif
     index_t count= 0;
@@ -2904,7 +2904,7 @@ void ripser<compressed_lower_distance_matrix>::cpu_assemble_columns_to_reduce(st
             }
 #ifdef INDICATE_PROGRESS
             if ((index + 1) % 1000000 == 0)
-				std::cerr << "\033[K"
+				//std::cerr << "\033[K"
 				          << "assembled " << columns_to_reduce.size() << " out of " << (index + 1)
 				          << "/" << num_simplices << " columns" << std::flush << "\r";
 #endif
@@ -2912,14 +2912,14 @@ void ripser<compressed_lower_distance_matrix>::cpu_assemble_columns_to_reduce(st
     }
 
 #ifdef INDICATE_PROGRESS
-    std::cerr << "\033[K"
+    //std::cerr << "\033[K"
 	          << "sorting " << num_simplices << " columns" << std::flush << "\r";
 #endif
     struct greaterdiam_lowerindex_diameter_index_t_struct_compare cmp;
     std::sort(columns_to_reduce.begin(), columns_to_reduce.end(),
               cmp);
 #ifdef INDICATE_PROGRESS
-    std::cerr << "\033[K";
+    //std::cerr << "\033[K";
 #endif
 }
 
@@ -2960,7 +2960,7 @@ void ripser<compressed_lower_distance_matrix>::assemble_columns_gpu_accel_transi
     }
 
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << "assembling columns" << std::flush;
+    //std::cerr << clear_line << "assembling columns" << std::flush;
 		std::chrono::steady_clock::time_point next= std::chrono::steady_clock::now() + time_step;
 #endif
     columns_to_reduce.clear();
@@ -2978,7 +2978,7 @@ void ripser<compressed_lower_distance_matrix>::assemble_columns_gpu_accel_transi
             }
 #ifdef INDICATE_PROGRESS
             if ((index + 1) % 1000000 == 0)
-				std::cerr << "\033[K"
+				//std::cerr << "\033[K"
 				          << "assembled " << columns_to_reduce.size() << " out of " << (index + 1)
 				          << "/" << max_num_simplices << " columns" << std::flush << "\r";
 #endif
@@ -2996,22 +2996,22 @@ void ripser<compressed_lower_distance_matrix>::assemble_columns_gpu_accel_transi
     }
 #ifdef COUNTING
     if(more_than_one_dim_cpu_only){
-        std::cerr<<"(if there are multiple dimensions needed to compute) num simplices for dim: "<<dim<<" is: "<<count_simplices<<std::endl;
+        //std::cerr<<"(if there are multiple dimensions needed to compute) num simplices for dim: "<<dim<<" is: "<<count_simplices<<std::endl;
     }
 #endif
 #ifdef INDICATE_PROGRESS
-    std::cerr << "\033[K"
+    //std::cerr << "\033[K"
 	          << "sorting " << columns_to_reduce.size() << " columns" << std::flush << "\r";
 #endif
     greaterdiam_lowerindex_diameter_index_t_struct_compare cmp;
     std::sort(columns_to_reduce.begin(), columns_to_reduce.end(), cmp);
 
 #ifdef COUNTING
-    std::cerr<<"NUM COLS to reduce for CPU: "<<columns_to_reduce.size()<<std::endl;
+    //std::cerr<<"NUM COLS to reduce for CPU: "<<columns_to_reduce.size()<<std::endl;
 #endif
 
 #ifdef INDICATE_PROGRESS
-    std::cerr << clear_line << std::flush;
+    //std::cerr << clear_line << std::flush;
 #endif
 
 }
@@ -3025,18 +3025,18 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
 
     index_t gpu_dim_max= calculate_gpu_dim_max_for_fullrips_computation_from_memory(dim_max, true);
 #ifdef PROFILING
-    std::cerr<<"recalculated dim_max based on GPU free DRAM capacity: "<<gpu_dim_max<<std::endl;
+    //std::cerr<<"recalculated dim_max based on GPU free DRAM capacity: "<<gpu_dim_max<<std::endl;
 #endif
     max_num_simplices_forall_dims= gpu_dim_max<(n/2)-1?get_num_simplices_for_dim(gpu_dim_max): get_num_simplices_for_dim((n/2)-1);
 
     if(gpu_dim_max>=1){
-        std::cerr<<"max possible num simplices over all dim<=dim_max (without clearing) for memory allocation: "<<max_num_simplices_forall_dims<<std::endl;
+        //std::cerr<<"max possible num simplices over all dim<=dim_max (without clearing) for memory allocation: "<<max_num_simplices_forall_dims<<std::endl;
 
         CUDACHECK(cudaMalloc((void **) &d_columns_to_reduce, sizeof(struct diameter_index_t_struct) * max_num_simplices_forall_dims));
         h_columns_to_reduce= (struct diameter_index_t_struct*) malloc(sizeof(struct diameter_index_t_struct)* max_num_simplices_forall_dims);
 
         if(h_columns_to_reduce==NULL){
-            std::cerr<<"malloc for h_columns_to_reduce failed"<<std::endl;
+            //std::cerr<<"malloc for h_columns_to_reduce failed"<<std::endl;
             exit(1);
         }
 
@@ -3050,7 +3050,7 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
 
         h_flagarray_OR_index_to_subindex= (index_t*) malloc(sizeof(index_t)*max_num_simplices_forall_dims);
         if(h_flagarray_OR_index_to_subindex==NULL) {
-            std::cerr<<"malloc for h_index_to_subindex failed"<<std::endl;
+            //std::cerr<<"malloc for h_index_to_subindex failed"<<std::endl;
         }
 #endif
         CUDACHECK(cudaMalloc((void **) &d_distance_matrix, sizeof(value_t)*dist.size()*(dist.size()-1)/2));
@@ -3062,7 +3062,7 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
         h_pivot_column_index_array_OR_nonapparent_cols= (index_t*) malloc(sizeof(index_t)*max_num_simplices_forall_dims);
 
         if(h_pivot_column_index_array_OR_nonapparent_cols==NULL){
-            std::cerr<<"malloc for h_pivot_column_index_array_OR_nonapparent_cols failed"<<std::endl;
+            //std::cerr<<"malloc for h_pivot_column_index_array_OR_nonapparent_cols failed"<<std::endl;
             exit(1);
         }
 
@@ -3085,17 +3085,17 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
         CUDACHECK(cudaMalloc((void**) &d_pivot_array, sizeof(struct index_t_pair_struct)*max_num_simplices_forall_dims));
         h_pivot_array= (struct index_t_pair_struct*) malloc(sizeof(struct index_t_pair_struct)*max_num_simplices_forall_dims);
         if(h_pivot_array==NULL){
-            std::cerr<<"malloc for h_pivot_array failed"<<std::endl;
+            //std::cerr<<"malloc for h_pivot_array failed"<<std::endl;
             exit(1);
         }
 #ifdef PROFILING
         cudaMemGetInfo(&freeMem,&totalMem);
-        std::cerr<<"GPU memory after full rips memory calculation and allocation, total mem: "<< totalMem<<" bytes, free mem: "<<freeMem<<" bytes"<<std::endl;
+        //std::cerr<<"GPU memory after full rips memory calculation and allocation, total mem: "<< totalMem<<" bytes, free mem: "<<freeMem<<" bytes"<<std::endl;
 #endif
     }
     sw.stop();
 #ifdef PROFILING
-    std::cerr<<"CUDA PREPROCESSING TIME (e.g. memory allocation time): "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"CUDA PREPROCESSING TIME (e.g. memory allocation time): "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     sw.start();
 
@@ -3105,14 +3105,14 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
         gpu_compute_dim_0_pairs(columns_to_reduce);
         sw.stop();
 #ifdef PROFILING
-        std::cerr<<"0-dimensional persistence total computation time with GPU: "<<sw.ms()/1000.0<<"s"<<std::endl;
+        //std::cerr<<"0-dimensional persistence total computation time with GPU: "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     }else{
 
         compute_dim_0_pairs(simplices, columns_to_reduce);
         sw.stop();
 #ifdef PROFILING
-        std::cerr<<"0-dimensional persistence total computation time with CPU alone: "<<sw.ms()/1000.0<<"s"<<std::endl;
+        //std::cerr<<"0-dimensional persistence total computation time with CPU alone: "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     }
 
@@ -3135,7 +3135,7 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
         //dim_forgpuscan= dim;//update dim_forgpuscan to the dimension that gpuscan was just done at
         sw.stop();
 #ifdef PROFILING
-        std::cerr<<"-SUM OF GPU MATRIX SCAN and post processing time for dim "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
+        //std::cerr<<"-SUM OF GPU MATRIX SCAN and post processing time for dim "<<dim<<": "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
         sw.start();
 
@@ -3143,7 +3143,7 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
                 dim, dim_forgpuscan);
         sw.stop();
 #ifdef PROFILING
-        std::cerr<<"SUBMATRIX REDUCTION TIME for dim "<< dim<<": "<<sw.ms()/1000.0<<"s"<<"\n"<<std::endl;
+        //std::cerr<<"SUBMATRIX REDUCTION TIME for dim "<< dim<<": "<<sw.ms()/1000.0<<"s"<<"\n"<<std::endl;
 #endif
         if (dim < gpu_dim_max) {
             sw.start();
@@ -3151,22 +3151,22 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
             sw.stop();
 
 #ifdef PROFILING
-            std::cerr << "ASSEMBLE COLS TIME for dim " << dim + 1 << ": " << sw.ms() / 1000.0
-                      << "s" << std::endl;
+            //std::cerr << "ASSEMBLE COLS TIME for dim " << dim + 1 << ": " << sw.ms() / 1000.0
+                      //<< "s" << std::endl;
 #endif
         }
     }
     gpu_accel_timer.stop();
 #ifdef PROFILING
     if(gpu_dim_max>=1)
-        std::cerr<<"GPU ACCELERATED COMPUTATION from dim 0 to dim "<<gpu_dim_max<<": "<<gpu_accel_timer.ms()/1000.0<<"s"<<std::endl;
+        //std::cerr<<"GPU ACCELERATED COMPUTATION from dim 0 to dim "<<gpu_dim_max<<": "<<gpu_accel_timer.ms()/1000.0<<"s"<<std::endl;
 #endif
     if(dim_max>gpu_dim_max){//do cpu only computation from this point on
 #ifdef CPUONLY_SPARSE_HASHMAP
-        std::cerr<<"MEMORY EFFICIENT/BUT TIME INEFFICIENT CPU-ONLY MODE FOR REMAINDER OF HIGH DIMENSIONAL COMPUTATION (NOT ENOUGH GPU DEVICE MEMORY)"<<std::endl;
+        //std::cerr<<"MEMORY EFFICIENT/BUT TIME INEFFICIENT CPU-ONLY MODE FOR REMAINDER OF HIGH DIMENSIONAL COMPUTATION (NOT ENOUGH GPU DEVICE MEMORY)"<<std::endl;
 #endif
 #ifndef CPUONLY_SPARSE_HASHMAP
-        std::cerr<<"CPU-ONLY MODE FOR REMAINDER OF HIGH DIMENSIONAL COMPUTATION (NOT ENOUGH GPU DEVICE MEMORY)"<<std::endl;
+        //std::cerr<<"CPU-ONLY MODE FOR REMAINDER OF HIGH DIMENSIONAL COMPUTATION (NOT ENOUGH GPU DEVICE MEMORY)"<<std::endl;
 #endif
         free_init_cpumem();
         hash_map<index_t,index_t> cpu_pivot_column_index;
@@ -3185,7 +3185,7 @@ void ripser<compressed_lower_distance_matrix>::compute_barcodes() {
                 //cpu_assemble_columns_to_reduce(columns_to_reduce,cpu_pivot_column_index, dim+1);
                 sw.stop();
 #ifdef PROFILING
-                std::cerr<<"TIME FOR CPU ASSEMBLE: "<<sw.ms()/1000.0<<"s"<<std::endl;
+                //std::cerr<<"TIME FOR CPU ASSEMBLE: "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
             }
         }
@@ -3202,12 +3202,12 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
     if(maxgpu_dim<dim_max){
         max_num_simplices_forall_dims= calculate_gpu_max_columns_for_sparserips_computation_from_memory();
 
-        std::cerr<<"(sparse) max possible num simplices for memory allocation forall dims: "<<max_num_simplices_forall_dims<<std::endl;
+        //std::cerr<<"(sparse) max possible num simplices for memory allocation forall dims: "<<max_num_simplices_forall_dims<<std::endl;
     }else {
         max_num_simplices_forall_dims =
                 dim_max < (n/2)-1 ? get_num_simplices_for_dim(dim_max) : get_num_simplices_for_dim((n/2)-1);
 
-        std::cerr<<"(dense case used in sparse computation) max possible num simplices for memory allocation forall dims: "<<max_num_simplices_forall_dims<<std::endl;
+        //std::cerr<<"(dense case used in sparse computation) max possible num simplices for memory allocation forall dims: "<<max_num_simplices_forall_dims<<std::endl;
     }
 
     //we assume that we have enough memory to last up to dim_max (should be fine with a >=32GB GPU); growth of num simplices can be very slow for sparse case
@@ -3217,7 +3217,7 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
         h_columns_to_reduce= (struct diameter_index_t_struct*) malloc(sizeof(struct diameter_index_t_struct)* max_num_simplices_forall_dims);
 
         if(h_columns_to_reduce==NULL){
-            std::cerr<<"malloc for h_columns_to_reduce failed"<<std::endl;
+            //std::cerr<<"malloc for h_columns_to_reduce failed"<<std::endl;
             exit(1);
         }
 
@@ -3226,7 +3226,7 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
 
         h_flagarray_OR_index_to_subindex= (index_t*) malloc(sizeof(index_t)*max_num_simplices_forall_dims);
         if(h_flagarray_OR_index_to_subindex==NULL) {
-            std::cerr<<"malloc for h_index_to_subindex failed"<<std::endl;
+            //std::cerr<<"malloc for h_index_to_subindex failed"<<std::endl;
         }
 #endif
 
@@ -3260,7 +3260,7 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
         //this array is used for both the pivot column index hash table array as well as the nonapparent cols array as an unstructured hashmap
         h_pivot_column_index_array_OR_nonapparent_cols= (index_t*) malloc(sizeof(index_t)*max_num_simplices_forall_dims);
         if(h_pivot_column_index_array_OR_nonapparent_cols==NULL){
-            std::cerr<<"malloc for h_pivot_column_index_array_OR_nonapparent_cols failed"<<std::endl;
+            //std::cerr<<"malloc for h_pivot_column_index_array_OR_nonapparent_cols failed"<<std::endl;
             exit(1);
         }
 
@@ -3285,24 +3285,24 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
         CUDACHECK(cudaMalloc((void**) &d_pivot_array, sizeof(struct index_t_pair_struct)*max_num_simplices_forall_dims));
         h_pivot_array= (struct index_t_pair_struct*) malloc(sizeof(struct index_t_pair_struct)*max_num_simplices_forall_dims);
         if(h_pivot_array==NULL){
-            std::cerr<<"malloc for h_pivot_array failed"<<std::endl;
+            //std::cerr<<"malloc for h_pivot_array failed"<<std::endl;
             exit(1);
         }
         CUDACHECK(cudaMalloc((void**) &d_simplices, sizeof(struct diameter_index_t_struct)*max_num_simplices_forall_dims));
         h_simplices= (struct diameter_index_t_struct*) malloc(sizeof(struct diameter_index_t_struct)*max_num_simplices_forall_dims);
 
         if(h_simplices==NULL){
-            std::cerr<<"malloc for h_simplices failed"<<std::endl;
+            //std::cerr<<"malloc for h_simplices failed"<<std::endl;
             exit(1);
         }
 #ifdef PROFILING
         cudaMemGetInfo(&freeMem,&totalMem);
-        std::cerr<<"after GPU memory allocation: total mem, free mem: " <<totalMem<<" bytes, "<<freeMem<<" bytes"<<std::endl;
+        //std::cerr<<"after GPU memory allocation: total mem, free mem: " <<totalMem<<" bytes, "<<freeMem<<" bytes"<<std::endl;
 #endif
     }
     sw.stop();
 #ifdef PROFILING
-    std::cerr<<"CUDA PREPROCESSING TIME (e.g. memory allocation): "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"CUDA PREPROCESSING TIME (e.g. memory allocation): "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     sw.start();
 
@@ -3312,14 +3312,14 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
         gpu_compute_dim_0_pairs(columns_to_reduce);
         sw.stop();
 #ifdef PROFILING
-        std::cerr<<"0-dimensional persistence total computation time with GPU: "<<sw.ms()/1000.0<<"s"<<std::endl;
+        //std::cerr<<"0-dimensional persistence total computation time with GPU: "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     }else{
         std::vector<diameter_index_t_struct> simplices;
         compute_dim_0_pairs(simplices, columns_to_reduce);
         sw.stop();
 #ifdef PROFILING
-        std::cerr<<"0-dimensional persistence total computation time with CPU alone: "<<sw.ms()/1000.0<<"s"<<std::endl;
+        //std::cerr<<"0-dimensional persistence total computation time with CPU alone: "<<sw.ms()/1000.0<<"s"<<std::endl;
 #endif
     }
 
@@ -3341,8 +3341,8 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
         //dim_forgpuscan= dim;
         sw.stop();
 #ifdef PROFILING
-        std::cerr << "-SUM OF GPU MATRIX SCAN and post processing time for dim " << dim << ": " << sw.ms() / 1000.0
-                  << "s" << std::endl;
+        //std::cerr << "-SUM OF GPU MATRIX SCAN and post processing time for dim " << dim << ": " << sw.ms() / 1000.0
+                  //<< "s" << std::endl;
 #endif
 
         sw.start();
@@ -3351,7 +3351,7 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
                 dim, dim_forgpuscan);
         sw.stop();
 #ifdef PROFILING
-        std::cerr << "SUBMATRIX REDUCTION TIME for dim " << dim << ": " << sw.ms() / 1000.0 << "s" << "\n" << std::endl;
+        //std::cerr << "SUBMATRIX REDUCTION TIME for dim " << dim << ": " << sw.ms() / 1000.0 << "s" << "\n" << std::endl;
 #endif
         if (dim < dim_max) {
             sw.start();
@@ -3360,14 +3360,14 @@ void ripser<sparse_distance_matrix>::compute_barcodes(){
             sw.stop();
 
 #ifdef PROFILING
-            std::cerr << "ASSEMBLE COLS TIME for dim " << dim + 1 << ": " << sw.ms() / 1000.0
-                      << "s" << std::endl;
+            //std::cerr << "ASSEMBLE COLS TIME for dim " << dim + 1 << ": " << sw.ms() / 1000.0
+                      //<< "s" << std::endl;
 #endif
         }
     }
     gpu_accel_timer.stop();
 #ifdef PROFILING
-    std::cerr<<"GPU ACCELERATED COMPUTATION: "<<gpu_accel_timer.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"GPU ACCELERATED COMPUTATION: "<<gpu_accel_timer.ms()/1000.0<<"s"<<std::endl;
 #endif
 
 }
@@ -3398,8 +3398,8 @@ compressed_lower_distance_matrix read_point_cloud_python(value_t* matrix, int nu
 
         index_t n= eucl_dist.size();
 
-        std::cerr << "point cloud with " << n << " points in dimension "
-                  << eucl_dist.points.front().size() << std::endl;
+        //std::cerr << "point cloud with " << n << " points in dimension "
+                  //<< eucl_dist.points.front().size() << std::endl;
 
         std::vector<value_t> distances;
 
@@ -3429,8 +3429,8 @@ compressed_lower_distance_matrix read_point_cloud(std::istream& input_stream) {
 
     index_t n= eucl_dist.size();
 
-    std::cerr << "point cloud with " << n << " points in dimension "
-              << eucl_dist.points.front().size() << std::endl;
+    //std::cerr << "point cloud with " << n << " points in dimension "
+              //<< eucl_dist.points.front().size() << std::endl;
 
     std::vector<value_t> distances;
 
@@ -3512,12 +3512,12 @@ compressed_lower_distance_matrix read_distance_matrix(std::istream& input_stream
 
 compressed_lower_distance_matrix read_dipha(std::istream& input_stream) {
     if (read<int64_t>(input_stream) != 8067171840) {
-        std::cerr << "input is not a Dipha file (magic number: 8067171840)" << std::endl;
+        //std::cerr << "input is not a Dipha file (magic number: 8067171840)" << std::endl;
         exit(-1);
     }
 
     if (read<int64_t>(input_stream) != 7) {
-        std::cerr << "input is not a Dipha distance matrix (file type: 7)" << std::endl;
+        //std::cerr << "input is not a Dipha distance matrix (file type: 7)" << std::endl;
         exit(-1);
     }
 
@@ -3550,7 +3550,7 @@ compressed_lower_distance_matrix read_matrix_python(value_t* matrix, int num_ent
         case POINT_CLOUD:
             return read_point_cloud_python(matrix, num_rows, num_columns);
     }
-    std::cerr<<"unsupported input file format for python interface"<<std::endl;
+    //std::cerr<<"unsupported input file format for python interface"<<std::endl;
     exit(-1);
 }
 
@@ -3567,7 +3567,7 @@ compressed_lower_distance_matrix read_file(std::istream& input_stream, file_form
         default:
             return read_binary(input_stream);
     }
-    std::cerr<<"unsupported input file format"<<std::endl;
+    //std::cerr<<"unsupported input file format"<<std::endl;
 }
 
 void print_usage_and_exit(int exit_code) {
@@ -3662,7 +3662,7 @@ extern "C" void run_main_filename(int argc,  char** argv, const char* filename) 
 
     std::ifstream file_stream(filename);
     if (filename && file_stream.fail()) {
-        std::cerr << "couldn't open file " << filename << std::endl;
+        //std::cerr << "couldn't open file " << filename << std::endl;
         exit(-1);
     }
     if (format == SPARSE) {
@@ -3672,12 +3672,12 @@ extern "C" void run_main_filename(int argc,  char** argv, const char* filename) 
                 read_sparse_distance_matrix(filename ? file_stream : std::cin);
         IOsw.stop();
 #ifdef PROFILING
-        std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
+        //std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
 #endif
         assert(dist.num_entries%2==0);
-        std::cerr << "sparse distance matrix with " << dist.size() << " points and "
-                  << dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
-                  << std::endl;
+        //std::cerr << "sparse distance matrix with " << dist.size() << " points and "
+                  //<< dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
+                  //<< std::endl;
 
         ripser<sparse_distance_matrix>(std::move(dist), dim_max, threshold, ratio)
                 .compute_barcodes();
@@ -3688,7 +3688,7 @@ extern "C" void run_main_filename(int argc,  char** argv, const char* filename) 
         compressed_lower_distance_matrix dist= read_file(filename ? file_stream : std::cin, format);
         IOsw.stop();
 #ifdef PROFILING
-        std::cerr<<IOsw.ms()/1000.0<<"s time to load distance matrix (I/O)"<<std::endl;
+        //std::cerr<<IOsw.ms()/1000.0<<"s time to load distance matrix (I/O)"<<std::endl;
 #endif
         value_t min= std::numeric_limits<value_t>::infinity(),
                 max= -std::numeric_limits<value_t>::infinity(), max_finite= max;
@@ -3710,31 +3710,31 @@ extern "C" void run_main_filename(int argc,  char** argv, const char* filename) 
             if (d <= threshold) ++num_edges;
         }
 
-        std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
+        //std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
 
         if (use_sparse) {
 
-            std::cerr << "sparse distance matrix with " << dist.size() << " points and "
-                      << num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
-                      << std::endl;
+            //std::cerr << "sparse distance matrix with " << dist.size() << " points and "
+                      //<< num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
+                      //<< std::endl;
             ripser<sparse_distance_matrix>(sparse_distance_matrix(std::move(dist), threshold),
                                            dim_max, threshold, ratio)
                     .compute_barcodes();
         } else {
-            std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
+            //std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
             ripser<compressed_lower_distance_matrix>(std::move(dist), dim_max, threshold, ratio).compute_barcodes();
         }
     }
     sw.stop();
 #ifdef INDICATE_PROGRESS
-    std::cerr<<clear_line<<std::flush;
+    //std::cerr<<clear_line<<std::flush;
 #endif
 #ifdef PROFILING
-    std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
     cudaGetDeviceProperties(&deviceProp, 0);
     cudaMemGetInfo(&freeMem_end,&totalMemory);
 
-    std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
+    //std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
 #endif
 }
 
@@ -3808,12 +3808,12 @@ extern "C" void run_main(int argc, char** argv, value_t* matrix, int num_entries
 
         IOsw.stop();
 #ifdef PROFILING
-        std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
+        //std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
 #endif
         assert(dist.num_entries%2==0);
-        std::cerr << "sparse distance matrix with " << dist.size() << " points and "
-                  << dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
-                  << std::endl;
+        //std::cerr << "sparse distance matrix with " << dist.size() << " points and "
+                  //<< dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
+                  //<< std::endl;
 
         ripser<sparse_distance_matrix>(std::move(dist), dim_max, threshold, ratio)
                 .compute_barcodes();
@@ -3824,8 +3824,8 @@ extern "C" void run_main(int argc, char** argv, value_t* matrix, int num_entries
         //IOsw.stop();
 
 #ifdef PROFILING
-        //std::cerr<<IOsw.ms()/1000.0<<"s time to load python matrix"<<std::endl;
-        std::cerr<<"loaded python dense user matrix"<<std::endl;
+        ////std::cerr<<IOsw.ms()/1000.0<<"s time to load python matrix"<<std::endl;
+        //std::cerr<<"loaded python dense user matrix"<<std::endl;
 #endif
         value_t min= std::numeric_limits<value_t>::infinity(),
                 max= -std::numeric_limits<value_t>::infinity(), max_finite= max;
@@ -3847,31 +3847,31 @@ extern "C" void run_main(int argc, char** argv, value_t* matrix, int num_entries
             if (d <= threshold) ++num_edges;
         }
 
-        std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
+        //std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
 
         if (use_sparse) {
 
-            std::cerr << "sparse distance matrix with " << dist.size() << " points and "
-                      << num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
-                      << std::endl;
+            //std::cerr << "sparse distance matrix with " << dist.size() << " points and "
+                      //<< num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
+                      //<< std::endl;
             ripser<sparse_distance_matrix>(sparse_distance_matrix(std::move(dist), threshold),
                                            dim_max, threshold, ratio)
                     .compute_barcodes();
         } else {
-            std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
+            //std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
             ripser<compressed_lower_distance_matrix>(std::move(dist), dim_max, threshold, ratio).compute_barcodes();
         }
     }
     sw.stop();
 #ifdef INDICATE_PROGRESS
-    std::cerr<<clear_line<<std::flush;
+    //std::cerr<<clear_line<<std::flush;
 #endif
 #ifdef PROFILING
-    std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
     cudaGetDeviceProperties(&deviceProp, 0);
     cudaMemGetInfo(&freeMem_end,&totalMemory);
 
-    std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
+    //std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
 #endif
 }
 
@@ -3941,7 +3941,7 @@ int main(int argc, char** argv) {
 
     std::ifstream file_stream(filename);
     if (filename && file_stream.fail()) {
-        std::cerr << "couldn't open file " << filename << std::endl;
+        //std::cerr << "couldn't open file " << filename << std::endl;
         exit(-1);
     }
     if (format == SPARSE) {
@@ -3951,12 +3951,12 @@ int main(int argc, char** argv) {
                 read_sparse_distance_matrix(filename ? file_stream : std::cin);
         IOsw.stop();
 #ifdef PROFILING
-        std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
+        //std::cerr<<IOsw.ms()/1000.0<<"s time to load sparse distance matrix (I/O)"<<std::endl;
 #endif
         assert(dist.num_entries%2==0);
-        std::cerr << "sparse distance matrix with " << dist.size() << " points and "
-                  << dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
-                  << std::endl;
+        //std::cerr << "sparse distance matrix with " << dist.size() << " points and "
+                  //<< dist.num_entries/2 << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
+                  //<< std::endl;
 
         ripser<sparse_distance_matrix>(std::move(dist), dim_max, threshold, ratio)
                 .compute_barcodes();
@@ -3967,7 +3967,7 @@ int main(int argc, char** argv) {
         compressed_lower_distance_matrix dist= read_file(filename ? file_stream : std::cin, format);
         IOsw.stop();
 #ifdef PROFILING
-        std::cerr<<IOsw.ms()/1000.0<<"s time to load distance matrix (I/O)"<<std::endl;
+        //std::cerr<<IOsw.ms()/1000.0<<"s time to load distance matrix (I/O)"<<std::endl;
 #endif
         value_t min= std::numeric_limits<value_t>::infinity(),
                 max= -std::numeric_limits<value_t>::infinity(), max_finite= max;
@@ -3989,30 +3989,30 @@ int main(int argc, char** argv) {
             if (d <= threshold) ++num_edges;
         }
 
-        std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
+        //std::cerr << "value range: [" << min << "," << max_finite << "]" << std::endl;
 
         if (use_sparse) {
 
-            std::cerr << "sparse distance matrix with " << dist.size() << " points and "
-                      << num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
-                      << std::endl;
+            //std::cerr << "sparse distance matrix with " << dist.size() << " points and "
+                      //<< num_edges << "/" << (dist.size() * (dist.size() - 1)) / 2 << " entries"
+                      //<< std::endl;
             ripser<sparse_distance_matrix>(sparse_distance_matrix(std::move(dist), threshold),
                                            dim_max, threshold, ratio)
                     .compute_barcodes();
         } else {
-            std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
+            //std::cerr << "distance matrix with " << dist.size() << " points" << std::endl;
             ripser<compressed_lower_distance_matrix>(std::move(dist), dim_max, threshold, ratio).compute_barcodes();
         }
     }
     sw.stop();
 #ifdef INDICATE_PROGRESS
-    std::cerr<<clear_line<<std::flush;
+    //std::cerr<<clear_line<<std::flush;
 #endif
 #ifdef PROFILING
-    std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
+    //std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
     cudaGetDeviceProperties(&deviceProp, 0);
     cudaMemGetInfo(&freeMem_end,&totalMemory);
 
-    std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
+    //std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
 #endif
 }
