@@ -19,7 +19,6 @@ def run(args, data = None):
         printHelpAndExit("Printing help")
     file_format = "distance"
     file_name = ""
-    print("\n------------RIPSER++ WITH PYTHON BINDINGS CALLED------------", sys.stderr)
     #print(params)
     i = 0
     while i < len(params):
