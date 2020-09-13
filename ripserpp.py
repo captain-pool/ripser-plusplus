@@ -3,7 +3,6 @@ import io
 import subprocess
 import os
 import shlex
-from numba import njit
 import sys
 
 def write_ltm(matrix, f):
