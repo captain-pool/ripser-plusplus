@@ -1,4 +1,5 @@
 from __future__ import print_function
+import _ctypes
 import ctypes
 import sys
 from .Ripser_plusplus_Converter import Ripser_plusplus_Converter, printHelpAndExit
@@ -11,8 +12,31 @@ Runs ripser++ through user arguments.
 args -- user arguments, given through CLI
 data -- either a file name or a numpy array
 '''
-def run(args, data = None):
 
+prog = None
+def load():
+    global prog
+    # Check whether environment variable is set
+    if "PYRIPSER_PP_BIN" in os.environ:
+        prog = ctypes.cdll.LoadLibrary(os.environ["PYRIPSER_PP_BIN"])
+    else:
+        path= find("libpyripser++.so","..")#check the parent directory and everything below it
+        if None != path:
+            prog = ctypes.cdll.LoadLibrary(path)
+        else:
+            path= find("libpyripser++.so","../..")#check the parent's parent directory and everything below it
+            if None != path:
+                prog = ctypes.cdll.LoadLibrary(path)
+            # Otherwise assume the current directory is under working_directory
+            elif os.path.isfile("../bin/libpyripser++.so"):
+                prog = ctypes.cdll.LoadLibrary("../bin/libpyripser++.so")
+            else:
+                printHelpAndExit("Could not locate libpyripser++.so file, please check README.md for details.")
+
+
+
+def run(args, data = None):
+    global prog
     # Split args
     params = args.split(' ')
     if "--help" in params:
@@ -90,24 +114,9 @@ def run(args, data = None):
 
     arguments = (ctypes.c_char_p * len(params)) ()
     arguments[:] = params
-
-    prog = None
-    # Check whether environment variable is set
-    if "PYRIPSER_PP_BIN" in os.environ:
-        prog = ctypes.cdll.LoadLibrary(os.environ["PYRIPSER_PP_BIN"])
-    else:
-        path= find("libpyripser++.so","..")#check the parent directory and everything below it
-        if None != path:
-            prog = ctypes.cdll.LoadLibrary(path)
-        else:
-            path= find("libpyripser++.so","../..")#check the parent's parent directory and everything below it
-            if None != path:
-                prog = ctypes.cdll.LoadLibrary(path)
-            # Otherwise assume the current directory is under working_directory
-            elif os.path.isfile("../bin/libpyripser++.so"):
-                prog = ctypes.cdll.LoadLibrary("../bin/libpyripser++.so")
-            else:
-                printHelpAndExit("Could not locate libpyripser++.so file, please check README.md for details.")
+    if prog is None:
+        print("Loading Runtime")
+        load()
 
     # Running python binding
     Ripser_plusplus_Converter(prog, arguments, file_name, file_format, matrix)

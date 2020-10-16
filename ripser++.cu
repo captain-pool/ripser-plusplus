@@ -1837,7 +1837,7 @@ public:
             if (u != v) {
 #ifdef PRINT_PERSISTENCE_PAIRS
                 if(e.diameter!=0) {
-    		    outfile << "0 " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf inf" << std::endl;
+    		    outfile << "0 0 " << e.diameter << " " << vertices_of_edge[0]<< " "<< vertices_of_edge[1] << " inf" << std::endl;
                 }
 #endif
                 dset.link(u, v);
@@ -1849,7 +1849,7 @@ public:
 
 #ifdef PRINT_PERSISTENCE_PAIRS
         for (index_t i= 0; i < n; ++i)
-            if (dset.find(i) == i) outfile << "0 " << i << " " << i << " inf inf" <<std::endl;
+            if (dset.find(i) == i) outfile << "0 0 inf" << i << " " << i << " inf" <<std::endl;
 #endif
     }
     void gpu_compute_dim_0_pairs(std::vector<struct diameter_index_t_struct>& columns_to_reduce);
@@ -2026,7 +2026,7 @@ public:
                     }
                 } else {
 #ifdef PRINT_PERSISTENCE_PAIRS
-			outfile <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
+			outfile << dim << " " << diameter <<" inf "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2108,20 +2108,28 @@ public:
 #ifdef PRINT_PERSISTENCE_PAIRS
       value_t death= pivot.diameter;
       // TODO(@captain-pool): What's the length of the vertices when doing higher dimensions?
-			
+//            if(dim == 1){
+//              vertices_of_death.clear();
+//              get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
+////              // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
+////              // Selecting vertex of maximum length edge
+//	      outfile << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] <<" " << vertices_of_death[2] << std::endl;
+//	    }	      
                         if (death > diameter * ratio) {
 #ifdef INDICATE_PROGRESS
-                            //std::cerr << clear_line << std::flush;
+                            std::cerr << clear_line << std::flush;
 #endif
             if(dim == 1){
               vertices_of_death.clear();
               get_simplex_vertices(pivot.index, dim + 1, n, std::back_inserter(vertices_of_death));
               // Feature gets created by Edges (1-simplex) and get closed by triangles (2-simplex)
               // Selecting vertex of maximum length edge
+//	      outfile << dim << " " << diameter << " " << death << " " << vertices_of_death[0] << " " << vertices_of_death[1] <<" " << vertices_of_death[2] << std::endl;
               value_t d1 = dist.distance(vertices_of_death[0], vertices_of_death[1]);
               value_t d2 = dist.distance(vertices_of_death[0], vertices_of_death[2]);
               value_t d3 = dist.distance(vertices_of_death[1], vertices_of_death[2]);
-              value_t c = dist.distance(vertices_of_birth[0], vertices_of_birth[1]);
+	      value_t c = dist.distance(vertices_of_birth[0], vertices_of_birth[1]);
+
               auto k = vertices_of_birth[0];
               auto l = vertices_of_birth[1];
               if( d1 >= c){
@@ -2137,8 +2145,14 @@ public:
                 k = vertices_of_death[1];
                 l = vertices_of_death[2];
               }
-              outfile<< dim << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << k << " " << l << std::endl;
-            }
+	      outfile<< dim << " " << dim << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << k << " " << l << std::endl;
+              //outfile<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " " << vertices_of_death[0] << " " << vertices_of_death[1] <<" " << vertices_of_death[2] << std::endl;
+	    }
+	    else if(dim == 2){
+//		outfile << dim << " " << diameter << " " << death << " " << vertices_of_death[0] << " " << vertices_of_death[1] <<" " << vertices_of_death[2] << std::endl;
+	//outfile << dim << " " << diameter << " " << birth << " " << vertices_of_birth[0] << " " << vertices_of_birth[1] <<" " << vertices_of_birth[2] << std::endl;
+
+	    }
             else{
                   std::cout << " [" << diameter << "," << death << ")" << std::endl
                           << std::flush;
@@ -2168,7 +2182,7 @@ public:
 #ifdef INDICATE_PROGRESS
                     //std::cerr << clear_line << std::flush;
 #endif
-		    outfile <<dim<<" "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf inf" << std::endl << std::flush;
+		    outfile << dim << " " << diameter <<" inf "<< vertices_of_birth[0] << " " << vertices_of_birth[1] << " inf" << std::endl << std::flush;
 #endif
                     break;
                 }
@@ -2367,7 +2381,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
             //remove paired destroyer columns (we compute cohomology)
             if(e.diameter!=0) {
 //                std::cout << " [0," << e.diameter << ")" << std::endl;
-		  outfile << "0 " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf inf" << std::endl;
+		  outfile << "0 0 " << e.diameter << " " << vertices_of_edge[0] << " " << vertices_of_edge[1] << " inf" << std::endl;
             }
 #endif
             dset.link(u, v);
@@ -2386,7 +2400,7 @@ void ripser<compressed_lower_distance_matrix>::gpu_compute_dim_0_pairs(std::vect
 
 #ifdef PRINT_PERSISTENCE_PAIRS
     for (index_t i= 0; i < n; ++i)
-        if (dset.find(i) == i) outfile << "0 " << i << " " << i << " inf inf" <<std::endl << std::flush;
+        if (dset.find(i) == i) outfile << "0 0 inf " << i << " " << i << " inf" <<std::endl << std::flush;
 #endif
 #ifdef COUNTING
     //std::cerr<<"num cols to reduce: dim 1, "<<*h_num_columns_to_reduce<<std::endl;
@@ -4012,7 +4026,7 @@ int main(int argc, char** argv) {
     //std::cerr<<"total time: "<<sw.ms()/1000.0<<"s"<<std::endl;
     cudaGetDeviceProperties(&deviceProp, 0);
     cudaMemGetInfo(&freeMem_end,&totalMemory);
-
+    cudaDeviceReset();
     //std::cerr<<"total GPU memory used: "<<(freeMem_start-freeMem_end)/1000.0/1000.0/1000.0<<"GB"<<std::endl;
 #endif
 }

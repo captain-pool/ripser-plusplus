@@ -21,7 +21,7 @@ def vietoris_rips_filteration(distance_matrix, dimension, verbose=False, pyripse
     sys.path.append(os.path.dirname(os.path.dirname(pyripser_pp_bin)))
     import ripser_plusplus_python as rppp
     rppp.run("--format distance --dim %d" % dimension, distance_matrix)
-    return np.loadtxt("/tmp/features.txt").astype(np.int32)
+    return np.loadtxt("/tmp/features.txt")#.astype(np.int32)
 
 
 def vietoris_rips_filteration_slow(distance_matrix, dimension, verbose=False, ripserpp_bin_path="/rpp/build/ripser++"):
