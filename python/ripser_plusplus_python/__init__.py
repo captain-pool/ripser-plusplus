@@ -115,7 +115,7 @@ def run(args, data = None):
     arguments = (ctypes.c_char_p * len(params)) ()
     arguments[:] = params
     if prog is None:
-        print("Loading Runtime")
+        print("\nLoading Runtime")
         load()
 
     # Running python binding
